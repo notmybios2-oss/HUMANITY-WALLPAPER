@@ -41,6 +41,12 @@
   WSW.settings = settings;
   WSW.onSettingsChanged = function (cb) { listeners.push(cb); };
 
+  /* NaN-safe number parsing: garbage input keeps the current value. */
+  function num(v, fallback) {
+    var n = parseFloat(v);
+    return isFinite(n) ? n : fallback;
+  }
+
   function colorPropToCss(value) {
     var parts = String(value).split(' ').map(function (c) {
       return Math.max(0, Math.min(255, Math.round(parseFloat(c) * 255)));
@@ -81,15 +87,15 @@
         set('backgroundColor', effectiveBg());
       }
       if (props.motionenabled) set('motionEnabled', !!props.motionenabled.value);
-      if (props.speed) set('speed', parseFloat(props.speed.value));
-      if (props.direction) set('directionDeg', parseFloat(props.direction.value));
+      if (props.speed) set('speed', num(props.speed.value, settings.speed));
+      if (props.direction) set('directionDeg', num(props.direction.value, settings.directionDeg));
       if (props.wander) set('wanderEnabled', !!props.wander.value);
-      if (props.density) set('density', parseFloat(props.density.value));
-      if (props.objectscale) set('objectScale', parseFloat(props.objectscale.value));
+      if (props.density) set('density', num(props.density.value, settings.density));
+      if (props.objectscale) set('objectScale', num(props.objectscale.value, settings.objectScale));
       if (props.parallax) set('parallaxEnabled', !!props.parallax.value);
       if (props.pan) set('panEnabled', !!props.pan.value);
       if (props.stir) set('stirEnabled', !!props.stir.value);
-      if (props.stirstrength) set('stirStrength', parseFloat(props.stirstrength.value));
+      if (props.stirstrength) set('stirStrength', num(props.stirstrength.value, settings.stirStrength));
       if (props.searchquery) set('searchQuery', String(props.searchquery.value || '').trim());
       if (props.interaction) set('interactionEnabled', !!props.interaction.value);
       if (props.cards) set('cardsEnabled', !!props.cards.value);
@@ -113,15 +119,15 @@
     var q;
     try { q = new URLSearchParams(window.location.search); } catch (e) { return; }
     var map = {
-      speed: function (v) { settings.speed = parseFloat(v); },
-      direction: function (v) { settings.directionDeg = parseFloat(v); },
-      density: function (v) { settings.density = parseFloat(v); },
-      scale: function (v) { settings.objectScale = parseFloat(v); },
+      speed: function (v) { settings.speed = num(v, settings.speed); },
+      direction: function (v) { settings.directionDeg = num(v, settings.directionDeg); },
+      density: function (v) { settings.density = num(v, settings.density); },
+      scale: function (v) { settings.objectScale = num(v, settings.objectScale); },
       parallax: function (v) { settings.parallaxEnabled = v !== '0'; },
       wander: function (v) { settings.wanderEnabled = v !== '0'; },
       pan: function (v) { settings.panEnabled = v !== '0'; },
       stir: function (v) { settings.stirEnabled = v !== '0'; },
-      stirstrength: function (v) { settings.stirStrength = parseFloat(v); },
+      stirstrength: function (v) { settings.stirStrength = num(v, settings.stirStrength); },
       motion: function (v) { settings.motionEnabled = v !== '0'; },
       q: function (v) { settings.searchQuery = v; },
       interaction: function (v) { settings.interactionEnabled = v !== '0'; },

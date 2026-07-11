@@ -7,7 +7,7 @@
  */
 import http from 'node:http';
 import { readFile } from 'node:fs/promises';
-import { join, extname, normalize } from 'node:path';
+import { join, extname, normalize, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const PORT = Number(process.argv[2]) || 8090;
@@ -46,7 +46,7 @@ async function serveStatic(req, res, url) {
   let path = decodeURIComponent(url.pathname);
   if (path === '/') path = '/index.html';
   const file = normalize(join(ROOT, path));
-  if (!file.startsWith(ROOT)) {
+  if (!file.startsWith(ROOT + sep)) {
     res.writeHead(403); res.end('forbidden'); return;
   }
   try {

@@ -16,7 +16,9 @@ if (-not (Test-Path $we)) {
 }
 
 $dest = Join-Path $we 'projects\myprojects\wikispy-wallpaper'
-robocopy $src $dest /MIR /NJH /NJS /NDL /NFL | Out-Null
+# snapshot/ is excluded: Windows streams the live API, and 33 MB of JSON
+# would bloat the Workshop package for a fallback only macOS/Pages needs.
+robocopy $src $dest /MIR /XD snapshot /NJH /NJS /NDL /NFL | Out-Null
 if ($LASTEXITCODE -ge 8) { Write-Error "robocopy failed with code $LASTEXITCODE" }
 
 Write-Host "Deployed to $dest"

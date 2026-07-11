@@ -83,6 +83,10 @@
 
   function updateCache(newObjs) {
     pendingCache = pendingCache.concat(newObjs);
+    // If writes keep failing (quota), the buffer must not grow forever.
+    if (pendingCache.length > CACHE_MAX) {
+      pendingCache = pendingCache.slice(pendingCache.length - CACHE_MAX);
+    }
     var now = Date.now();
     if (lastCacheWrite && now - lastCacheWrite < CACHE_WRITE_INTERVAL) return;
     var existing = readStore(CACHE_KEY) || [];
@@ -273,7 +277,8 @@
     for (var i = 0; i < items.length; i++) {
       var obj = items[i];
       if (!obj || !obj.url || !obj.width || !obj.height) continue;
-      if (!remember(obj.cutoutId)) continue;
+      // An undefined id must not poison the dedupe set.
+      if (obj.cutoutId !== undefined && !remember(obj.cutoutId)) continue;
       state.queue.push(obj);
       added++;
     }

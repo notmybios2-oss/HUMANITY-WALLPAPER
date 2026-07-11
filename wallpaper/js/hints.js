@@ -30,8 +30,21 @@
       if (!firstObjectVisible() && loadingEl) loadingEl.classList.add('visible');
     }, 700);
 
+    var GIVE_UP_MS = 90000;
+    var startedAt = Date.now();
     var poll = setInterval(function () {
-      if (!firstObjectVisible()) return;
+      if (!firstObjectVisible()) {
+        // Nothing will ever load (dead network, no cache): stop polling
+        // and fade the label rather than spin forever.
+        if (Date.now() - startedAt > GIVE_UP_MS) {
+          clearInterval(poll);
+          if (loadingEl) {
+            loadingEl.classList.remove('visible');
+            setTimeout(function () { loadingEl.remove(); loadingEl = null; }, 3000);
+          }
+        }
+        return;
+      }
       clearInterval(poll);
       if (loadingEl) {
         loadingEl.classList.remove('visible'); // slow fade out
