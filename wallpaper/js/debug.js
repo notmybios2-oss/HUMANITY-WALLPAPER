@@ -42,6 +42,7 @@
         ' over=' + (world.lastDown.over ? 'ITEM' : 'empty') +
         ' armed=' + world.lastDown.armed +
         '  guard: ' + (world.buttonsReliable ? 'ARMED' : 'off'),
+      'EVENTS (d/m/u + buttons): ' + (world.inputLog || '—'),
       'hover: ' + (world.hovered || '—') +
         '  interaction: ' + (s.interactionEnabled ? 'on' : 'off') +
         '  cards: ' + (s.cardsEnabled ? 'on' : 'off') +

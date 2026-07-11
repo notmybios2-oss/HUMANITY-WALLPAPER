@@ -55,6 +55,14 @@
   // The decisive diagnostic: the most recent left mousedown's button bitmask,
   // whether it landed over an item, and whether the guard let it arm a click.
   var lastDown = { buttons: -1, over: false, armed: false };
+  // Ring buffer of the last few raw mouse events as "<type><buttons>"
+  // (d=down, m=move, u=up), so a single screenshot of an icon drag reveals
+  // the whole event signature Wallpaper Engine actually forwards.
+  var inputLog = [];
+  function logEv(ch, buttons) {
+    inputLog.push(ch + (buttons === undefined ? '?' : buttons));
+    if (inputLog.length > 10) inputLog.shift();
+  }
   var panVel = { x: 0, y: 0 };     // camera px/sec from pan/stir inertia
   var lastPanAt = -1e9;            // performance.now()/1000 of last pan input
 
@@ -492,6 +500,9 @@
     pointer.inside = true;
     pointerMoved = true;
     lastInput = { type: 'move', button: -1, buttons: e.buttons, over: !!hovered };
+    // Only log moves during a potential drag (button pressed at down), so
+    // idle hover doesn't flood the buffer but icon/real drags are captured.
+    if (leftDown || dragging) logEv('m', e.buttons);
     trackStir(e);
     // A held left button becomes a grab once it travels far enough;
     // staying put keeps it a click. (The icon guard acts at mousedown, not
@@ -535,6 +546,7 @@
     // see that, we start trusting `buttons` to reject leaked icon events.
     if (e.button === 0 && (e.buttons & 1)) buttonsReliable = true;
     lastInput = { type: 'down', button: e.button, buttons: e.buttons, over: !!hovered };
+    if (e.button === 0) logEv('d', e.buttons);
     if (onUiElement(e)) return; // UI clicks must not start pans
     if (!WSW.settings.panEnabled) return;
     // Skip presses the OS says have no button actually held (icon leak).
@@ -552,6 +564,7 @@
 
   window.addEventListener('mouseup', function (e) {
     lastInput = { type: 'up', button: e.button, buttons: e.buttons, over: !!hovered };
+    if (e.button === 0) logEv('u', e.buttons);
     if (e.button === 1 && dragging && dragButton === 1) {
       endDrag();
       return;
@@ -639,6 +652,7 @@
         clicks: clicksSeen,
         lastInput: lastInput,
         lastDown: lastDown,
+        inputLog: inputLog.join(' '),
         buttonsReliable: buttonsReliable,
         speedFactor: speedFactor,
         motionStopped: motionStopped,
