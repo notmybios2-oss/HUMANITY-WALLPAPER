@@ -1,0 +1,135 @@
+{
+  "contentrating": "Everyone",
+  "description": "Get the world's knowledge as your wallpaper. 43,000+ Wikipedia cutouts drift forever through a cosmos, you can left-click anything to see a card. Near-zero CPU when still, offline resilient, everything configurable. Unofficial fan project powered by neal.fun's Wiki Spy - images from Wikipedia/Wikimedia Commons with attribution on every card. contact.mybios@gmail.com if you wana contact me",
+  "file": "index.html",
+  "title": "HUMANITY WALLPAPER",
+  "type": "web",
+  "tags": ["Abstract", "Relaxing"],
+  "preview": "preview.gif",
+  "general": {
+    "properties": {
+      "schemecolor": {
+        "order": 0,
+        "text": "ui_browse_properties_scheme_color",
+        "type": "color",
+        "value": "0.06 0.07 0.10"
+      },
+      "bgcolor": {
+        "order": 1,
+        "text": "Background color",
+        "type": "color",
+        "value": "0.06 0.07 0.10"
+      },
+      "motionenabled": {
+        "order": 2,
+        "text": "Ambient drift",
+        "type": "bool",
+        "value": true
+      },
+      "speed": {
+        "order": 3,
+        "text": "Drift speed (px/sec)",
+        "type": "slider",
+        "value": 8,
+        "min": 0,
+        "max": 60,
+        "fraction": true
+      },
+      "direction": {
+        "order": 4,
+        "text": "Direction (0=up, 90=right, 180=down, 270=left)",
+        "type": "slider",
+        "value": 90,
+        "min": 0,
+        "max": 360
+      },
+      "wander": {
+        "order": 5,
+        "text": "Direction wander (slow drift)",
+        "type": "bool",
+        "value": true
+      },
+      "density": {
+        "order": 6,
+        "text": "Object density",
+        "type": "slider",
+        "value": 1,
+        "min": 0.1,
+        "max": 2,
+        "fraction": true
+      },
+      "objectscale": {
+        "order": 7,
+        "text": "Object scale",
+        "type": "slider",
+        "value": 1,
+        "min": 0.1,
+        "max": 2,
+        "fraction": true
+      },
+      "parallax": {
+        "order": 8,
+        "text": "Parallax depth layers",
+        "type": "bool",
+        "value": true
+      },
+      "pan": {
+        "order": 9,
+        "text": "Grab and pan (hold left mouse, then drag)",
+        "type": "bool",
+        "value": true
+      },
+      "stir": {
+        "order": 10,
+        "text": "Stir the cosmos (fast pointer sweeps push the world)",
+        "type": "bool",
+        "value": false
+      },
+      "stirstrength": {
+        "order": 11,
+        "text": "Stir strength",
+        "type": "slider",
+        "value": 1,
+        "min": 0.2,
+        "max": 3,
+        "fraction": true
+      },
+      "interaction": {
+        "order": 12,
+        "text": "Focus mode (tracking an object stops the drift)",
+        "type": "bool",
+        "value": true
+      },
+      "cards": {
+        "order": 13,
+        "text": "Item cards (left-click an item)",
+        "type": "bool",
+        "value": true
+      },
+      "hovercards": {
+        "order": 14,
+        "text": "Also show cards on hover (no click needed)",
+        "type": "bool",
+        "value": false
+      },
+      "showblocks": {
+        "order": 15,
+        "text": "Show blocked list (manage and revert blocks)",
+        "type": "bool",
+        "value": false
+      },
+      "lowpower": {
+        "order": 16,
+        "text": "Low power mode (fewer objects, 24 FPS)",
+        "type": "bool",
+        "value": false
+      },
+      "debugoverlay": {
+        "order": 17,
+        "text": "Debug overlay",
+        "type": "bool",
+        "value": false
+      }
+    }
+  }
+}
