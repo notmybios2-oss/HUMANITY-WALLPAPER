@@ -45,6 +45,13 @@
   var leftDownPos = { x: 0, y: 0 };
   var DRAG_START_PX = 6;           // movement beyond this turns a click into a drag
   var dragLast = { x: 0, y: 0 };
+  // Desktop-icon guard: a real empty-desktop grab carries buttons&1 the whole
+  // time; icon drags/clicks that leak through Wallpaper Engine tend to arrive
+  // with buttons=0 (OS captured the button for its own drag). We only trust
+  // this signal once we've seen it work, so browsers and odd runtimes that
+  // never populate `buttons` fall back to the old behavior instead of breaking.
+  var buttonsReliable = false;
+  var lastInput = { type: '-', button: -1, buttons: -1, over: false };
   var panVel = { x: 0, y: 0 };     // camera px/sec from pan/stir inertia
   var lastPanAt = -1e9;            // performance.now()/1000 of last pan input
 
@@ -481,9 +488,11 @@
     pointer.y = e.clientY;
     pointer.inside = true;
     pointerMoved = true;
+    lastInput = { type: 'move', button: -1, buttons: e.buttons, over: !!hovered };
     trackStir(e);
     // A held left button becomes a grab once it travels far enough;
-    // staying put keeps it a click.
+    // staying put keeps it a click. (The icon guard acts at mousedown, not
+    // here, so a genuine drag is never cancelled by odd per-move button data.)
     if (leftDown && !dragging) {
       var mx = e.clientX - leftDownPos.x;
       var my = e.clientY - leftDownPos.y;
@@ -519,12 +528,18 @@
     if (e.button === 0) clicksSeen.left++;
     else if (e.button === 1) clicksSeen.middle++;
     else if (e.button === 2) clicksSeen.right++;
+    // A genuine press reports its own button in the bitmask; the first time we
+    // see that, we start trusting `buttons` to reject leaked icon events.
+    if (e.button === 0 && (e.buttons & 1)) buttonsReliable = true;
+    lastInput = { type: 'down', button: e.button, buttons: e.buttons, over: !!hovered };
     if (onUiElement(e)) return; // UI clicks must not start pans
     if (!WSW.settings.panEnabled) return;
+    // Skip presses the OS says have no button actually held (icon leak).
+    var heldOk = !buttonsReliable || (e.buttons & 1);
     if (e.button === 1) {
       e.preventDefault();
       startDrag(1, e.clientX, e.clientY);
-    } else if (e.button === 0) {
+    } else if (e.button === 0 && heldOk) {
       leftDown = true;
       leftDownPos.x = e.clientX;
       leftDownPos.y = e.clientY;
@@ -532,6 +547,7 @@
   });
 
   window.addEventListener('mouseup', function (e) {
+    lastInput = { type: 'up', button: e.button, buttons: e.buttons, over: !!hovered };
     if (e.button === 1 && dragging && dragButton === 1) {
       endDrag();
       return;
@@ -617,6 +633,8 @@
         panVel: { x: Math.round(panVel.x), y: Math.round(panVel.y) },
         stir: { active: stir.active, speed: Math.round(stir.speed) },
         clicks: clicksSeen,
+        lastInput: lastInput,
+        buttonsReliable: buttonsReliable,
         speedFactor: speedFactor,
         motionStopped: motionStopped,
         densityScale: densityScale,
