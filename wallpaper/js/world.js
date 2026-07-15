@@ -544,11 +544,13 @@
     if (e.button === 0) {
       if (dragging && dragButton === 0) {
         endDrag();
-      } else if (leftDown && hovered && WSW.settings.cardsEnabled &&
-                 WSW.cards && !WSW.cards.onCard(pointer)) {
-        // A plain click on an object opens its card. Clicks on the card
-        // itself must not refocus objects behind it.
-        WSW.cards.forceShow(hovered);
+      } else if (leftDown && WSW.settings.cardsEnabled && WSW.cards &&
+                 !WSW.cards.onCard(pointer)) {
+        // Clicking an object opens/switches its card; clicking empty space
+        // dismisses an open card. Clicks on the card itself are ignored here
+        // so its buttons work and it never refocuses objects behind it.
+        if (hovered) WSW.cards.forceShow(hovered);
+        else WSW.cards.dismiss();
       }
       leftDown = false;
     }

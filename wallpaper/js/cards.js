@@ -28,6 +28,8 @@
   var lostMs = 0;
   var switchMs = 0;
   var visible = false;
+  var sticky = false;  // click-opened cards stay until another click; only
+                       // dwell-opened (hover mode) cards auto-close on leave
 
   function build() {
     el = document.createElement('div');
@@ -193,17 +195,19 @@
            pointer.y >= r.top - CARD_PAD && pointer.y <= r.bottom + CARD_PAD;
   }
 
-  function show(o) {
+  function show(o, isSticky) {
     current = o;
     fill(o);
     el.classList.add('visible');
     visible = true;
+    sticky = !!isSticky;
   }
 
   function hide() {
     current = null;
     el.classList.remove('visible');
     visible = false;
+    sticky = false;
   }
 
   /* Called every frame from the world loop. */
@@ -217,10 +221,14 @@
       return;
     }
 
-    if (visible) {
-      // The card owns the pointer: resting on it (even when another object
-      // sits behind or between) keeps it open. Only a sustained hover on a
-      // different object, or truly leaving, closes it.
+    if (visible && sticky) {
+      // Click-opened cards stay put no matter where the pointer goes; only a
+      // click (handled in world.js: another item switches, empty space
+      // dismisses) changes them.
+    } else if (visible) {
+      // Dwell (hover) mode: the card owns the pointer while resting on it or
+      // its object; a sustained hover on a different object, or truly leaving,
+      // closes it.
       var onCard = pointerOnCard(pointer);
       if (onCard || hovered === current) {
         lostMs = 0;
@@ -262,7 +270,7 @@
         var ready = WSW.settings.interactionEnabled
           ? (dwellMs >= MIN_DWELL_MS && stoppedMs >= STOPPED_MS)
           : dwellMs >= FALLBACK_DWELL_MS;
-        if (ready) show(candidate);
+        if (ready) show(candidate, false);
       } else {
         lostMs += dtMs;
         if (lostMs > STICKY_MS) {
@@ -283,7 +291,7 @@
     isVisible: function () {
       return visible;
     },
-    /* Clicking an object skips the dwell entirely. */
+    /* Clicking an object skips the dwell entirely and pins the card open. */
     forceShow: function (record) {
       if (!el || !record) return;
       candidate = record;
@@ -291,7 +299,11 @@
       stoppedMs = 0;
       lostMs = 0;
       switchMs = 0;
-      show(record);
+      show(record, true);
+    },
+    /* Clicking empty space closes a sticky card. */
+    dismiss: function () {
+      if (visible) hide();
     },
     /* True when the pointer is on the visible card (with slack). */
     onCard: function (pointer) {
