@@ -35,7 +35,8 @@
         "order": 2,
         "text": "Background color",
         "type": "color",
-        "value": "0.06 0.07 0.10"
+        "value": "0.06 0.07 0.10",
+        "condition": "bgmode.value == 'color'"
       },
       "bgimage": {
         "order": 3,
