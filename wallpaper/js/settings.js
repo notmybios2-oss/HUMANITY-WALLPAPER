@@ -10,6 +10,9 @@
 
   var settings = {
     backgroundColor: 'rgb(15, 18, 26)',
+    backgroundMode: 'color',  // 'color' | 'image' | 'transparent'
+    backgroundImage: '',      // URL; empty falls back to the color
+    backgroundDim: 0.35,      // 0..0.9 black overlay over the image
     motionEnabled: true,
     speed: 8,             // px/sec at layer factor 1
     directionDeg: 90,     // 0=up, 90=right, 180=down, 270=left (content motion)
@@ -73,6 +76,21 @@
     return (userBg === DEFAULT_BG && schemeBg) ? schemeBg : userBg;
   }
 
+  function bgMode(v) {
+    return (v === 'image' || v === 'transparent') ? v : 'color';
+  }
+
+  function clampDim(v) { return Math.max(0, Math.min(0.9, v)); }
+
+  // WE hands file properties over as a bare local path (often URL-encoded
+  // already); the CEF runtime only loads it with a file:/// prefix.
+  function filePropToUrl(value) {
+    var path = String(value || '').trim();
+    if (!path) return '';
+    try { path = decodeURIComponent(path); } catch (e) { /* keep as-is */ }
+    return 'file:///' + encodeURI(path.replace(/\\/g, '/').replace(/^\/+/, ''));
+  }
+
   window.wallpaperPropertyListener = {
     applyUserProperties: function (props) {
       var changed = [];
@@ -86,6 +104,9 @@
         userBg = colorPropToCss(props.bgcolor.value);
         set('backgroundColor', effectiveBg());
       }
+      if (props.bgmode) set('backgroundMode', bgMode(props.bgmode.value));
+      if (props.bgimage) set('backgroundImage', filePropToUrl(props.bgimage.value));
+      if (props.bgdim) set('backgroundDim', clampDim(num(props.bgdim.value, settings.backgroundDim)));
       if (props.motionenabled) set('motionEnabled', !!props.motionenabled.value);
       if (props.speed) set('speed', num(props.speed.value, settings.speed));
       if (props.direction) set('directionDeg', num(props.direction.value, settings.directionDeg));
@@ -119,6 +140,9 @@
     var q;
     try { q = new URLSearchParams(window.location.search); } catch (e) { return; }
     var map = {
+      bg: function (v) { settings.backgroundMode = bgMode(v); },
+      bgimage: function (v) { settings.backgroundImage = v; },
+      bgdim: function (v) { settings.backgroundDim = clampDim(num(v, settings.backgroundDim)); },
       speed: function (v) { settings.speed = num(v, settings.speed); },
       direction: function (v) { settings.directionDeg = num(v, settings.directionDeg); },
       density: function (v) { settings.density = num(v, settings.density); },

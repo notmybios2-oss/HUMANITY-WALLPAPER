@@ -15,20 +15,54 @@
         "type": "color",
         "value": "0.06 0.07 0.10"
       },
-      "bgcolor": {
+      "bgmode": {
         "order": 1,
+        "text": "Background",
+        "type": "combo",
+        "value": "color",
+        "options": [
+          {
+            "label": "Solid color",
+            "value": "color"
+          },
+          {
+            "label": "Image (pick your desktop wallpaper)",
+            "value": "image"
+          }
+        ]
+      },
+      "bgcolor": {
+        "order": 2,
         "text": "Background color",
         "type": "color",
         "value": "0.06 0.07 0.10"
       },
+      "bgimage": {
+        "order": 3,
+        "text": "Background image",
+        "type": "file",
+        "fileType": "image",
+        "value": "",
+        "condition": "bgmode.value == 'image'"
+      },
+      "bgdim": {
+        "order": 4,
+        "text": "Background image dimming",
+        "type": "slider",
+        "value": 0.35,
+        "min": 0,
+        "max": 0.9,
+        "fraction": true,
+        "condition": "bgmode.value == 'image'"
+      },
       "motionenabled": {
-        "order": 2,
+        "order": 5,
         "text": "Ambient drift",
         "type": "bool",
         "value": true
       },
       "speed": {
-        "order": 3,
+        "order": 6,
         "text": "Drift speed (px/sec)",
         "type": "slider",
         "value": 8,
@@ -37,7 +71,7 @@
         "fraction": true
       },
       "direction": {
-        "order": 4,
+        "order": 7,
         "text": "Direction (0=up, 90=right, 180=down, 270=left)",
         "type": "slider",
         "value": 90,
@@ -45,13 +79,13 @@
         "max": 360
       },
       "wander": {
-        "order": 5,
+        "order": 8,
         "text": "Direction wander (slow drift)",
         "type": "bool",
         "value": true
       },
       "density": {
-        "order": 6,
+        "order": 9,
         "text": "Object density",
         "type": "slider",
         "value": 1,
@@ -60,7 +94,7 @@
         "fraction": true
       },
       "objectscale": {
-        "order": 7,
+        "order": 10,
         "text": "Object scale",
         "type": "slider",
         "value": 1,
@@ -69,25 +103,25 @@
         "fraction": true
       },
       "parallax": {
-        "order": 8,
+        "order": 11,
         "text": "Parallax depth layers",
         "type": "bool",
         "value": true
       },
       "pan": {
-        "order": 9,
+        "order": 12,
         "text": "Grab and pan (hold left mouse, then drag)",
         "type": "bool",
         "value": true
       },
       "stir": {
-        "order": 10,
+        "order": 13,
         "text": "Stir the cosmos (fast pointer sweeps push the world)",
         "type": "bool",
         "value": false
       },
       "stirstrength": {
-        "order": 11,
+        "order": 14,
         "text": "Stir strength",
         "type": "slider",
         "value": 1,
@@ -96,37 +130,37 @@
         "fraction": true
       },
       "interaction": {
-        "order": 12,
+        "order": 15,
         "text": "Focus mode (tracking an object stops the drift)",
         "type": "bool",
         "value": true
       },
       "cards": {
-        "order": 13,
+        "order": 16,
         "text": "Item cards (left-click an item)",
         "type": "bool",
         "value": true
       },
       "hovercards": {
-        "order": 14,
+        "order": 17,
         "text": "Also show cards on hover (no click needed)",
         "type": "bool",
         "value": false
       },
       "showblocks": {
-        "order": 15,
+        "order": 18,
         "text": "Show blocked list (manage and revert blocks)",
         "type": "bool",
         "value": false
       },
       "lowpower": {
-        "order": 16,
+        "order": 19,
         "text": "Low power mode (fewer objects, 24 FPS)",
         "type": "bool",
         "value": false
       },
       "debugoverlay": {
-        "order": 17,
+        "order": 20,
         "text": "Debug overlay",
         "type": "bool",
         "value": false

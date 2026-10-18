@@ -54,7 +54,9 @@ Everything is a Wallpaper Engine property — no code editing needed:
 
 | Setting | Default | What it does |
 | --- | --- | --- |
+| Background | solid color | Solid color or an image (see below) |
 | Background color | deep navy | Also follows your WE scheme color until customized |
+| Background image / dimming | none / 0.35 | Pick any picture — e.g. your Windows wallpaper — and darken it so cards stay readable |
 | Motion / speed / direction | on, 8 px/s, → | The ambient drift; direction re-aims when you fling |
 | Direction wander | on | Slow ±10° meander so long sessions never feel mechanical |
 | Object density / scale | 1.0 / 1.0 | How crowded and how big |
@@ -66,6 +68,16 @@ Everything is a Wallpaper Engine property — no code editing needed:
 | Low power mode | off | Half density + 24 FPS cap for laptops |
 | Debug overlay | off | Live API/FPS/cache/input diagnostics |
 
+### Showing your desktop wallpaper behind the cosmos
+
+Wallpaper Engine draws web wallpapers on an opaque surface, so a truly
+transparent page shows up white or black there, not your Windows wallpaper.
+To get the same look, set **Background** to **Image** and pick your desktop
+wallpaper file (your current one lives in
+`%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper` — copy it and
+add a `.jpg` extension). In a plain browser, `?bg=transparent` makes
+the page itself transparent for overlay tools that support it.
+
 ## Development
 
 ```
@@ -75,7 +87,7 @@ node dev/serve.mjs
 Open `http://localhost:8090/?debug=1`. The dev server proxies the Wiki Spy
 API (its CORS allowlist only covers neal.fun; Wallpaper Engine's runtime
 calls it directly). Useful URL params: `speed`, `direction`, `density`,
-`q=<keyword>`, `blocksui=1`, `failapi=1` (simulate an outage), `debug=1`.
+`q=<keyword>`, `bg=color|image|transparent`, `bgimage=<url>`, `bgdim`, `blocksui=1`, `failapi=1` (simulate an outage), `debug=1`.
 Press `d` for the debug overlay.
 
 ## Credits

@@ -579,17 +579,38 @@
 
   WSW.onSettingsChanged(function (keys) {
     if (keys.indexOf('parallaxEnabled') !== -1) buildLayers();
-    if (keys.indexOf('backgroundColor') !== -1) {
-      document.body.style.background = WSW.settings.backgroundColor;
+    if (keys.indexOf('backgroundColor') !== -1 ||
+        keys.indexOf('backgroundMode') !== -1 ||
+        keys.indexOf('backgroundImage') !== -1 ||
+        keys.indexOf('backgroundDim') !== -1) {
+      applyBackground();
     }
   });
+
+  /* Color, a user image (dimmed for card legibility), or fully transparent
+   * so a host that composites the page (browser, Plash) shows what's behind.
+   * Image mode without an image falls back to the color. */
+  function applyBackground() {
+    var s = WSW.settings;
+    var bg = s.backgroundColor;
+    if (s.backgroundMode === 'transparent') {
+      bg = 'transparent';
+    } else if (s.backgroundMode === 'image' && s.backgroundImage) {
+      var dim = 'rgba(0, 0, 0, ' + s.backgroundDim + ')';
+      bg = 'linear-gradient(' + dim + ', ' + dim + '), ' +
+        'url("' + s.backgroundImage.replace(/["\\]/g, '\\$&') + '") center / cover no-repeat, ' +
+        s.backgroundColor;
+    }
+    document.documentElement.style.background = s.backgroundMode === 'transparent' ? 'transparent' : '';
+    document.body.style.background = bg;
+  }
 
   WSW.world = {
     start: function () {
       root = document.getElementById('world');
       vw = window.innerWidth;
       vh = window.innerHeight;
-      document.body.style.background = WSW.settings.backgroundColor;
+      applyBackground();
       buildLayers();
       running = true;
       fpsWindowStart = performance.now();
