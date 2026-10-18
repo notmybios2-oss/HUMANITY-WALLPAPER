@@ -13,6 +13,8 @@
     backgroundMode: 'color',  // 'color' | 'image' | 'transparent'
     backgroundImage: '',      // URL; empty falls back to the color
     backgroundDim: 0.35,      // 0..0.9 black overlay over the image
+    backgroundLayout: 'auto', // 'auto' | 'span' | 'repeat' (multi-monitor)
+    backgroundScreens: 2,     // copies across, for 'repeat'
     motionEnabled: true,
     speed: 8,             // px/sec at layer factor 1
     directionDeg: 90,     // 0=up, 90=right, 180=down, 270=left (content motion)
@@ -82,6 +84,12 @@
 
   function clampDim(v) { return Math.max(0, Math.min(0.9, v)); }
 
+  function bgLayout(v) {
+    return (v === 'span' || v === 'repeat') ? v : 'auto';
+  }
+
+  function clampScreens(v) { return Math.max(1, Math.min(6, Math.round(v))); }
+
   // WE hands file properties over as a bare local path (often URL-encoded
   // already); the CEF runtime only loads it with a file:/// prefix.
   function filePropToUrl(value) {
@@ -107,6 +115,8 @@
       if (props.bgmode) set('backgroundMode', bgMode(props.bgmode.value));
       if (props.bgimage) set('backgroundImage', filePropToUrl(props.bgimage.value));
       if (props.bgdim) set('backgroundDim', clampDim(num(props.bgdim.value, settings.backgroundDim)));
+      if (props.bglayout) set('backgroundLayout', bgLayout(props.bglayout.value));
+      if (props.bgscreens) set('backgroundScreens', clampScreens(num(props.bgscreens.value, settings.backgroundScreens)));
       if (props.motionenabled) set('motionEnabled', !!props.motionenabled.value);
       if (props.speed) set('speed', num(props.speed.value, settings.speed));
       if (props.direction) set('directionDeg', num(props.direction.value, settings.directionDeg));
@@ -143,6 +153,8 @@
       bg: function (v) { settings.backgroundMode = bgMode(v); },
       bgimage: function (v) { settings.backgroundImage = v; },
       bgdim: function (v) { settings.backgroundDim = clampDim(num(v, settings.backgroundDim)); },
+      bglayout: function (v) { settings.backgroundLayout = bgLayout(v); },
+      bgscreens: function (v) { settings.backgroundScreens = clampScreens(num(v, settings.backgroundScreens)); },
       speed: function (v) { settings.speed = num(v, settings.speed); },
       direction: function (v) { settings.directionDeg = num(v, settings.directionDeg); },
       density: function (v) { settings.density = num(v, settings.density); },

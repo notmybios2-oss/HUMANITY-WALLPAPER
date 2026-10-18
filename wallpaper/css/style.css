@@ -385,3 +385,15 @@ img.ws-obj.loaded {
   white-space: pre-wrap;
   pointer-events: none;
 }
+
+/* Background image tiles: one per screen across a WE wallpaper group. */
+#bg {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  pointer-events: none;
+}
+
+#bg > div {
+  flex: 1 1 0;
+}

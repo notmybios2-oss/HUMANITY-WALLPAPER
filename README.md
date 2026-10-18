@@ -57,6 +57,7 @@ Everything is a Wallpaper Engine property — no code editing needed:
 | Background | solid color | Solid color or an image (see below) |
 | Background color | deep navy | Also follows your WE scheme color until customized |
 | Background image / dimming | none / 0.35 | Pick any picture — e.g. your Windows wallpaper — and darken it so cards stay readable |
+| Image layout / screens across | auto / 2 | Multi-monitor: one copy per screen (auto-detected), span one copy across all, or repeat a set number of times |
 | Motion / speed / direction | on, 8 px/s, → | The ambient drift; direction re-aims when you fling |
 | Direction wander | on | Slow ±10° meander so long sessions never feel mechanical |
 | Object density / scale | 1.0 / 1.0 | How crowded and how big |
@@ -78,6 +79,12 @@ wallpaper file (your current one lives in
 add a `.jpg` extension). In a plain browser, `?bg=transparent` makes
 the page itself transparent for overlay tools that support it.
 
+With a Wallpaper Engine **wallpaper group** spanning several monitors, the
+page is one wide canvas. **Image layout → Auto** guesses the screen count
+from its shape (assuming 16:9 screens side by side) and gives each screen its
+own copy of the image; if the guess is off (ultrawide, mixed resolutions),
+choose **Repeat per screen** and set **Screens across** yourself.
+
 ## Development
 
 ```
@@ -87,7 +94,7 @@ node dev/serve.mjs
 Open `http://localhost:8090/?debug=1`. The dev server proxies the Wiki Spy
 API (its CORS allowlist only covers neal.fun; Wallpaper Engine's runtime
 calls it directly). Useful URL params: `speed`, `direction`, `density`,
-`q=<keyword>`, `bg=color|image|transparent`, `bgimage=<url>`, `bgdim`, `blocksui=1`, `failapi=1` (simulate an outage), `debug=1`.
+`q=<keyword>`, `bg=color|image|transparent`, `bgimage=<url>`, `bgdim`, `bglayout=auto|span|repeat`, `bgscreens`, `blocksui=1`, `failapi=1` (simulate an outage), `debug=1`.
 Press `d` for the debug overlay.
 
 ## Credits

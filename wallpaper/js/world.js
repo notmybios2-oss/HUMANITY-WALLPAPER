@@ -575,34 +575,67 @@
   window.addEventListener('resize', function () {
     vw = window.innerWidth;
     vh = window.innerHeight;
+    applyBackground(); // screen-count guess depends on the canvas shape
   });
 
   WSW.onSettingsChanged(function (keys) {
     if (keys.indexOf('parallaxEnabled') !== -1) buildLayers();
-    if (keys.indexOf('backgroundColor') !== -1 ||
-        keys.indexOf('backgroundMode') !== -1 ||
-        keys.indexOf('backgroundImage') !== -1 ||
-        keys.indexOf('backgroundDim') !== -1) {
-      applyBackground();
-    }
+    if (keys.join(' ').indexOf('background') !== -1) applyBackground();
   });
 
+  /* A WE wallpaper group hands us one canvas spanning every monitor
+   * (2 x 1920x1080 side by side = 3840x1080). Assuming 16:9 screens in a
+   * row, the canvas shape tells us roughly how many there are. */
+  function guessScreensAcross() {
+    var w = window.innerWidth, h = window.innerHeight;
+    if (!w || !h) return 1;
+    return Math.max(1, Math.min(6, Math.round((w / h) / (16 / 9))));
+  }
+
+  function imageCopies(s) {
+    if (s.backgroundLayout === 'span') return 1;
+    if (s.backgroundLayout === 'repeat') return s.backgroundScreens;
+    return guessScreensAcross();
+  }
+
+  var bgEl = null;
+  var bgKey = '';
+
   /* Color, a user image (dimmed for card legibility), or fully transparent
-   * so a host that composites the page (browser, Plash) shows what's behind.
-   * Image mode without an image falls back to the color. */
+   * so a host that composites the page (e.g. a browser overlay) shows
+   * what's behind. The image sits in one tile per screen, each cropped to
+   * fill its own screen like Windows' "Fill". Image mode without an image
+   * falls back to the color. */
   function applyBackground() {
     var s = WSW.settings;
-    var bg = s.backgroundColor;
-    if (s.backgroundMode === 'transparent') {
-      bg = 'transparent';
-    } else if (s.backgroundMode === 'image' && s.backgroundImage) {
-      var dim = 'rgba(0, 0, 0, ' + s.backgroundDim + ')';
-      bg = 'linear-gradient(' + dim + ', ' + dim + '), ' +
-        'url("' + s.backgroundImage.replace(/["\\]/g, '\\$&') + '") center / cover no-repeat, ' +
-        s.backgroundColor;
+    var transparent = s.backgroundMode === 'transparent';
+    var useImage = s.backgroundMode === 'image' && !!s.backgroundImage;
+    document.documentElement.style.background = transparent ? 'transparent' : '';
+    document.body.style.background = transparent ? 'transparent' : s.backgroundColor;
+
+    var copies = useImage ? imageCopies(s) : 0;
+    var key = useImage ? [s.backgroundImage, s.backgroundDim, copies].join('|') : '';
+    if (key === bgKey) return;
+    bgKey = key;
+
+    if (!useImage) {
+      if (bgEl) { bgEl.remove(); bgEl = null; }
+      return;
     }
-    document.documentElement.style.background = s.backgroundMode === 'transparent' ? 'transparent' : '';
-    document.body.style.background = bg;
+    if (!bgEl) {
+      bgEl = document.createElement('div');
+      bgEl.id = 'bg';
+      document.body.insertBefore(bgEl, document.body.firstChild);
+    }
+    var dim = 'rgba(0, 0, 0, ' + s.backgroundDim + ')';
+    var tileBg = 'linear-gradient(' + dim + ', ' + dim + '), ' +
+      'url("' + s.backgroundImage.replace(/["\\]/g, '\\$&') + '") center / cover no-repeat';
+    bgEl.textContent = '';
+    for (var i = 0; i < copies; i++) {
+      var tile = document.createElement('div');
+      tile.style.background = tileBg;
+      bgEl.appendChild(tile);
+    }
   }
 
   WSW.world = {

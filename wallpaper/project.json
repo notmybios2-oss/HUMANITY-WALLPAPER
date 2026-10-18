@@ -46,8 +46,38 @@
         "value": "",
         "condition": "bgmode.value == 'image'"
       },
-      "bgdim": {
+      "bglayout": {
         "order": 4,
+        "text": "Image layout (multi-monitor)",
+        "type": "combo",
+        "value": "auto",
+        "options": [
+          {
+            "label": "Auto (one copy per screen)",
+            "value": "auto"
+          },
+          {
+            "label": "Span across all screens",
+            "value": "span"
+          },
+          {
+            "label": "Repeat per screen (set count below)",
+            "value": "repeat"
+          }
+        ],
+        "condition": "bgmode.value == 'image'"
+      },
+      "bgscreens": {
+        "order": 5,
+        "text": "Screens across (for Repeat)",
+        "type": "slider",
+        "value": 2,
+        "min": 1,
+        "max": 6,
+        "condition": "bgmode.value == 'image' && bglayout.value == 'repeat'"
+      },
+      "bgdim": {
+        "order": 6,
         "text": "Background image dimming",
         "type": "slider",
         "value": 0.35,
@@ -57,13 +87,13 @@
         "condition": "bgmode.value == 'image'"
       },
       "motionenabled": {
-        "order": 5,
+        "order": 7,
         "text": "Ambient drift",
         "type": "bool",
         "value": true
       },
       "speed": {
-        "order": 6,
+        "order": 8,
         "text": "Drift speed (px/sec)",
         "type": "slider",
         "value": 8,
@@ -72,7 +102,7 @@
         "fraction": true
       },
       "direction": {
-        "order": 7,
+        "order": 9,
         "text": "Direction (0=up, 90=right, 180=down, 270=left)",
         "type": "slider",
         "value": 90,
@@ -80,13 +110,13 @@
         "max": 360
       },
       "wander": {
-        "order": 8,
+        "order": 10,
         "text": "Direction wander (slow drift)",
         "type": "bool",
         "value": true
       },
       "density": {
-        "order": 9,
+        "order": 11,
         "text": "Object density",
         "type": "slider",
         "value": 1,
@@ -95,7 +125,7 @@
         "fraction": true
       },
       "objectscale": {
-        "order": 10,
+        "order": 12,
         "text": "Object scale",
         "type": "slider",
         "value": 1,
@@ -104,25 +134,25 @@
         "fraction": true
       },
       "parallax": {
-        "order": 11,
+        "order": 13,
         "text": "Parallax depth layers",
         "type": "bool",
         "value": true
       },
       "pan": {
-        "order": 12,
+        "order": 14,
         "text": "Grab and pan (hold left mouse, then drag)",
         "type": "bool",
         "value": true
       },
       "stir": {
-        "order": 13,
+        "order": 15,
         "text": "Stir the cosmos (fast pointer sweeps push the world)",
         "type": "bool",
         "value": false
       },
       "stirstrength": {
-        "order": 14,
+        "order": 16,
         "text": "Stir strength",
         "type": "slider",
         "value": 1,
@@ -131,37 +161,37 @@
         "fraction": true
       },
       "interaction": {
-        "order": 15,
+        "order": 17,
         "text": "Focus mode (tracking an object stops the drift)",
         "type": "bool",
         "value": true
       },
       "cards": {
-        "order": 16,
+        "order": 18,
         "text": "Item cards (left-click an item)",
         "type": "bool",
         "value": true
       },
       "hovercards": {
-        "order": 17,
+        "order": 19,
         "text": "Also show cards on hover (no click needed)",
         "type": "bool",
         "value": false
       },
       "showblocks": {
-        "order": 18,
+        "order": 20,
         "text": "Show blocked list (manage and revert blocks)",
         "type": "bool",
         "value": false
       },
       "lowpower": {
-        "order": 19,
+        "order": 21,
         "text": "Low power mode (fewer objects, 24 FPS)",
         "type": "bool",
         "value": false
       },
       "debugoverlay": {
-        "order": 20,
+        "order": 22,
         "text": "Debug overlay",
         "type": "bool",
         "value": false
